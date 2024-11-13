@@ -6,6 +6,14 @@ const userController = require("../controllers/User-Controllers.js");
 // User Registration
 router.post("/register", userController.registerUser);
 
+// User Login
+router.post("/login", userController.loginUser);
+
+// Check if email exists
+router.post("/check-email", userController.checkEmail);
+
+// Get details of user using ID
+router.post("/details", userController.getProfile);
 
 
 

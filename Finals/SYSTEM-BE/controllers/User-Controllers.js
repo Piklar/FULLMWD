@@ -1,5 +1,6 @@
 const User = require("../models/User-Model.js");
 const bcryptjs = require("bcryptjs");
+const auth = require("../auth.js")
 
 module.exports.registerUser = (req,res) => {
     let newUser = new User({
@@ -27,3 +28,71 @@ module.exports.registerUser = (req,res) => {
         })
     })
 }
+
+// User Login
+module.exports.loginUser = (req, res) => {
+    let {email, password} = req.body;
+    return User.findOne({email: email}).then(result => {
+        if(result == null){
+            return res.send({
+                code: "USER-NOT-REGISTERED",
+                message: "Pakicheck baka hindi pa registered yung hinahanap mo!"
+            })
+        }else{
+            const isPasswordCorrect = bcryptjs.compareSync(password, result.password);
+
+            if(isPasswordCorrect){
+                return res.send({
+                    code: "USER-LOGIN-SUCCESS",
+                    token: auth.createAccessToken(result)
+                })
+            }else{
+                return res.send({
+                    code: "PASSWORD-INCORRECT",
+                    message: "MAY MALI SA NAGAWA MO, PAKIULIT. SALAMAT!"
+                })
+            }
+        }
+    })
+}
+
+// Check email if existing
+module.exports.checkEmail = (req, res) => {
+    let {email} = req.body;
+    return User.find({email: email}).then(result => {
+        if(result.length > 0){
+            return res.send({
+                code: "EMAIL-EXISTS",
+                message: "MAY EMAIL NA NAKAREGISTER NA DIYAN! BUGOK!!!"
+            })
+        }else{
+            return res.send({
+                code: "EMAIL-NOT-EXISTING",
+                message: "HINDI PA NAKAREGISTER YANG EMAIL NA YAN!"
+            })
+        }
+    })
+}
+
+    // Get Profile Details using ID
+    module.exports.getProfile = (req, res) => {
+        let {_id} = req.body;
+        return User.find({_id: _id}).then(result => {
+            if(result.length > 0){
+                let x = "";
+                for (let i = 0; i < result[0].password.length; i++){
+                    x += "*"
+                }
+                result[0].password = x;
+                return res.send({
+                    code: "ID EXIST, HERE IS THE DATA!!!",
+                    result: result
+                })
+            }else{
+                return res.send({
+                    code: "ID-NOT-EXISTING",
+                    message: "HINDI PA NAKAREGISTER YANG ID NA YAN!, REGISTER MO MUNA!!!!!!!!!!!!!!!!!!"
+                })
+            }
+        })
+    }
