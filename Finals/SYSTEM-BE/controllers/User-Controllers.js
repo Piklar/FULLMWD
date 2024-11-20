@@ -1,4 +1,5 @@
 const User = require("../models/User-Model.js");
+const Enroll = require("../models/Enrollment-Model.js");
 const bcryptjs = require("bcryptjs");
 const auth = require("../auth.js")
 
@@ -74,25 +75,51 @@ module.exports.checkEmail = (req, res) => {
     })
 }
 
-    // Get Profile Details using ID
-    module.exports.getProfile = (req, res) => {
-        let {_id} = req.body;
-        return User.find({_id: _id}).then(result => {
-            if(result.length > 0){
-                let x = "";
-                for (let i = 0; i < result[0].password.length; i++){
-                    x += "*"
-                }
-                result[0].password = x;
-                return res.send({
-                    code: "ID EXIST, HERE IS THE DATA!!!",
-                    result: result
-                })
-            }else{
-                return res.send({
-                    code: "ID-NOT-EXISTING",
-                    message: "HINDI PA NAKAREGISTER YANG ID NA YAN!, REGISTER MO MUNA!!!!!!!!!!!!!!!!!!"
-                })
+// Get Profile Details using ID
+module.exports.getProfile = (req, res) => {
+    let {_id} = req.body;
+    return User.find({_id: _id}).then(result => {
+        if(result.length > 0){
+            let x = "";
+            for (let i = 0; i < result[0].password.length; i++){
+                x += "*"
             }
-        })
-    }
+            result[0].password = x;
+            return res.send({
+                code: "ID EXIST, HERE IS THE DATA!!!",
+                result: result
+            })
+        }else{
+            return res.send({
+                code: "ID-NOT-EXISTING",
+                message: "HINDI PA NAKAREGISTER YANG ID NA YAN!, REGISTER MO MUNA!!!!!!!!!!!!!!!!!!"
+            })
+        }
+    })
+}
+
+// Enroll a user
+module.exports.enroll = (req, res) => {
+    const { id } = req.user;
+
+    let newEnrollment = new Enroll({
+        userId: id,
+        enrolledCourse: req.body.enrolledCourse,
+        totalPrice: req.body.totalPrice
+    });
+
+    newEnrollment.save().then((result, err) => {
+        if(err){
+            res.send({
+                code: "ENROLLMENT-FAILED",
+                message: "There is a problem during your enrollment, please try again!"
+            })
+        }else{
+            res.send({
+                code: "ENROLLMENT-SUCCESSFUL",
+                message: "Congratulations, you are now enrolled!",
+                result: result
+            })
+        }
+    })
+}

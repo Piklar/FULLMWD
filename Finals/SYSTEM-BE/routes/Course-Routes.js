@@ -9,4 +9,19 @@ router.post("/", courseController.addCourse);
 // Get all courses
 router.get("/all", courseController.getAllCourses);
 
+//Get all active courses
+router.get("/all/active", courseController.getAllActiveCourses);
+
+//Get all inactive courses
+router.get("/all/inactive", courseController.getAllInactiveCourses);
+
+//Get specific course
+router.get("/search/:courseId", courseController.getSpecificCourse);
+
+//Archive course using courseId
+router.put("/archive/:courseId", courseController.archiveCourse);
+
+//Activate course using courseId
+router.put("/activate/:courseId", courseController.activateCourse);
+
 module.exports = router;
