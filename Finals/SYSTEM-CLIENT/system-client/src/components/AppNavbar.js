@@ -1,6 +1,14 @@
+import { useContext, useState } from 'react';
 import {Navbar, Container, Nav} from 'react-bootstrap';
+import { Link, NavLink } from 'react-router-dom';
+import UserContext from '../UserContext';
+
+
 
 export default function AppNavbar(){
+
+    const { user } = useContext(UserContext);
+
     return(
         <Navbar expand="lg" className="bg-body-tertiary sticky-top shadow">
       <Container>
@@ -8,10 +16,16 @@ export default function AppNavbar(){
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#courses">Courses</Nav.Link>
-            <Nav.Link href="#register">Register</Nav.Link>
-            <Nav.Link href="#login">Login</Nav.Link>
+            <Nav.Link as={NavLink} to = "/">Home</Nav.Link>
+            <Nav.Link as={NavLink} to = "/">Courses</Nav.Link>
+            <Nav.Link as={NavLink} to = "/register">Register</Nav.Link>
+
+            {
+              (user.token !== null) ? 
+              <Nav.Link as={NavLink} to = "/logout">Logout</Nav.Link>
+              :
+              <Nav.Link as={NavLink} to = "/login">Login</Nav.Link> 
+            }
           </Nav>
         </Navbar.Collapse>
       </Container>

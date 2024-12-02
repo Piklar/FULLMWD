@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { Container, Row, Col, Button, Form } from "react-bootstrap"
-
+import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import Swal from "sweetalert2";
 
 
 export default function Register() {
@@ -30,9 +30,23 @@ export default function Register() {
         .then(result => result.json())
         .then(result => {
             if(result.code === "REGISTRATION-SUCCESS!!!"){
-                alert(result.message)
+                Swal.fire({
+                    title: "SUCCESS",
+                    text: result.message,
+                    icon: "success"
+                })
+                setfirstName("");
+                setmiddleName("");
+                setlastName("");
+                setemail("");
+                setcontactNumber("");
+                setpassword("");
             }else{
-                alert("Something Went Wrong!");
+                Swal.fire({
+                    title: "SOMETHING WENT WRONG!",
+                    text: "Please try again",
+                    icon: "error"
+                })
             }
         })
     }
