@@ -13,11 +13,14 @@ router.post("/login", userController.loginUser);
 // Check if email exists
 router.post("/check-email", userController.checkEmail);
 
-// Get details of user using ID
-router.post("/details", userController.getProfile);
+// Get user details
+router.post("/details", verify, userController.getProfile);
 
-//Get user details
+// Get user details
 router.post("/enroll", verify, userController.enroll);
+
+
+
 
 
 module.exports = router;

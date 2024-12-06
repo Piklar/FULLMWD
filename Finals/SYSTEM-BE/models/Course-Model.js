@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 // Schema/Blueprint of DATA
 const courseSchema = new mongoose.Schema({
+    imgLink: String,
     name: String,
     description: String,
     price: Number,

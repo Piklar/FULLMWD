@@ -22,7 +22,7 @@ const userRoutes = require("./routes/User-Routes.js");
 const courseRoutes = require("./routes/Course-Routes.js");
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_STRING)
+mongoose.connect(process.env.MONGODB_STRING);
 mongoose.connection.once("open", () => console.log('Now connected to MongoDB Atlas'));
 
 // Backend Routes

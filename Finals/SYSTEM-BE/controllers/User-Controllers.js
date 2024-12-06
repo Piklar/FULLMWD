@@ -1,13 +1,13 @@
 const User = require("../models/User-Model.js");
-const Enroll = require("../models/Enrollment-Model.js");
+const Enroll = require("../models/Enrollment-model.js");
 const bcryptjs = require("bcryptjs");
-const auth = require("../auth.js")
+const auth = require("../auth.js");
 
-module.exports.registerUser = (req,res) => {
+module.exports.registerUser = (req, res) => {
     let newUser = new User({
         firstName: req.body.firstName,
         middleName: req.body.middleName,
-        lastname: req.body.lastName,
+        lastName: req.body.lastName,
         email: req.body.email,
         contactNumber: req.body.contactNumber,
         password: bcryptjs.hashSync(req.body.password, 10)
@@ -16,7 +16,7 @@ module.exports.registerUser = (req,res) => {
     return newUser.save()
     .then(result => {
         res.send({
-            code: "REGISTRATION-SUCCESS!!!",
+            code: "REGISTRATION-SUCCESS",
             message: "You are now registered!",
             result: result
         })
@@ -24,20 +24,20 @@ module.exports.registerUser = (req,res) => {
     .catch(error => {
         res.send({
             code: "REGISTRATION-FAILED",
-            message: "We've encounted an error during the registration. Please try again!",
+            message: "We've encountered an error during the registration. Please try again!",
             result: error
         })
     })
 }
 
 // User Login
-module.exports.loginUser = (req, res) => {
+module.exports.loginUser = (req, res) =>{
     let {email, password} = req.body;
     return User.findOne({email: email}).then(result => {
         if(result == null){
             return res.send({
                 code: "USER-NOT-REGISTERED",
-                message: "Pakicheck baka hindi pa registered yung hinahanap mo!"
+                message: "Please register to login."
             })
         }else{
             const isPasswordCorrect = bcryptjs.compareSync(password, result.password);
@@ -50,7 +50,7 @@ module.exports.loginUser = (req, res) => {
             }else{
                 return res.send({
                     code: "PASSWORD-INCORRECT",
-                    message: "MAY MALI SA NAGAWA MO, PAKIULIT. SALAMAT!"
+                    message: "Password is not correct. Please try again."
                 })
             }
         }
@@ -58,41 +58,37 @@ module.exports.loginUser = (req, res) => {
 }
 
 // Check email if existing
-module.exports.checkEmail = (req, res) => {
+module.exports.checkEmail = (req,res) => {
     let {email} = req.body;
     return User.find({email: email}).then(result => {
         if(result.length > 0){
             return res.send({
                 code: "EMAIL-EXISTS",
-                message: "MAY EMAIL NA NAKAREGISTER NA DIYAN! BUGOK!!!"
+                message: "The user is registered."
             })
         }else{
             return res.send({
                 code: "EMAIL-NOT-EXISTING",
-                message: "HINDI PA NAKAREGISTER YANG EMAIL NA YAN!"
-            })
+                message: "The user is not registered."
+            }) 
         }
     })
 }
 
-// Get Profile Details using ID
 module.exports.getProfile = (req, res) => {
-    let {_id} = req.body;
-    return User.find({_id: _id}).then(result => {
-        if(result.length > 0){
-            let x = "";
-            for (let i = 0; i < result[0].password.length; i++){
-                x += "*"
-            }
-            result[0].password = x;
+    const {id} = req.user;
+    return User.findById(id).then(result => {
+        if(result == null || result.length === 0){
             return res.send({
-                code: "ID EXIST, HERE IS THE DATA!!!",
-                result: result
+                code: "USER-NOT-FOUND",
+                message: "Cannot find user with the provided ID."
             })
         }else{
+            result.password = "*****";
             return res.send({
-                code: "ID-NOT-EXISTING",
-                message: "HINDI PA NAKAREGISTER YANG ID NA YAN!, REGISTER MO MUNA!!!!!!!!!!!!!!!!!!"
+                code: "USER-FOUND",
+                message: "A user was found.",
+                result: result
             })
         }
     })
@@ -100,19 +96,20 @@ module.exports.getProfile = (req, res) => {
 
 // Enroll a user
 module.exports.enroll = (req, res) => {
-    const { id } = req.user;
-
+    const {id} = req.user;
+    
     let newEnrollment = new Enroll({
         userId: id,
         enrolledCourse: req.body.enrolledCourse,
         totalPrice: req.body.totalPrice
-    });
+    })
 
-    newEnrollment.save().then((result, err) => {
+    return newEnrollment.save().then((result, err) => {
         if(err){
             res.send({
                 code: "ENROLLMENT-FAILED",
-                message: "There is a problem during your enrollment, please try again!"
+                message: "There is a problem during your enrollment, please try again!",
+                error: err
             })
         }else{
             res.send({

@@ -1,8 +1,9 @@
 const Course = require("../models/Course-Model.js");
 
 module.exports.addCourse = (req, res) => {
-    let {name, description, price} = req.body;
+    let{imgLink, name, description, price} = req.body;
     let newCourse = new Course({
+        imgLink: imgLink,
         name: name,
         description: description,
         price: price
@@ -11,14 +12,14 @@ module.exports.addCourse = (req, res) => {
     return newCourse.save().then(result => {
         return res.send({
             code: "COURSE-ADDED",
-            message: "NA SAVE NA YUNG COURSE NA NILAGAY MO!!!!",
+            message: "The course is now posted in the applicaiton.",
             result: result
-        })
+        })   
     })
     .catch(error => {
         res.send({
             code: "SERVER-ERROR",
-            message: "MAY ERRROR NUNG NILALAGAY YUNG COURSE MO. PAKIULIT, THANK YOU!",
+            message: "We've encountered an error while adding the course. Please try again!",
             result: error
         })
     })
@@ -30,62 +31,62 @@ module.exports.getAllCourses = (req, res) => {
         if(result == null || result.length === 0){
             return res.send({
                 code: "COURSE-EMPTY",
-                message: "WALA PANG NAKALAGAY NA COURSE BHIE!"
+                message: "There is no added course yet."
             })
         }else{
             return res.send({
                 code: "ALL-COURSES-RESULT",
-                message: "ETO NA LAHAT NUNG MGA COURSES NA NAKAREGISTER NA!!!",
+                message: "Here are the list of courses.",
                 result: result
             })
         }
     })
 }
 
-//Get all active courses
+// Get all active courses
 module.exports.getAllActiveCourses = (req, res) => {
     return Course.find({isActive: true}).then(result => {
         if(result == null || result.length === 0){
             return res.send({
                 code: "COURSE-EMPTY",
-                message: "WALA PANG NAKALAGAY NA COURSE BHIE!"
+                message: "There is no added course yet."
             })
         }else{
             return res.send({
                 code: "ALL-ACTIVE-COURSES-RESULT",
-                message: "ETO NA LAHAT NUNG MGA COURSES NA ACTIVE!!!",
+                message: "Here are the list of active courses.",
                 result: result
             })
         }
     })
 }
 
-//Get all inactive courses
+// Get all inactive courses
 module.exports.getAllInactiveCourses = (req, res) => {
     return Course.find({isActive: false}).then(result => {
         if(result == null || result.length === 0){
             return res.send({
                 code: "COURSE-EMPTY",
-                message: "WALA PANG NAKALAGAY NA COURSE BHIE!"
+                message: "There is no added course yet."
             })
         }else{
             return res.send({
-                code: "ALL-ACTIVE-COURSES-RESULT",
-                message: "ETO NA LAHAT NUNG MGA COURSES NA INACTIVE!!!",
+                code: "ALL-INACTIVE-COURSES-RESULT",
+                message: "Here are the list of inactive courses.",
                 result: result
             })
         }
     })
 }
 
-//Get specific course using ID
+// Get specific course
 module.exports.getSpecificCourse = (req, res) => {
     const {courseId} = req.params;
     return Course.findById(courseId).then(result => {
         if(result == null || result.length === 0){
             return res.send({
                 code: "COURSE-NOT-FOUND",
-                message: "WALA PANG NAKALAGAY NA COURSE WITH THAT ID BHIE!"
+                message: "The course cannot be found."
             })
         }else{
             return res.send({
@@ -98,49 +99,47 @@ module.exports.getSpecificCourse = (req, res) => {
 }
 
 // Archive course
-module.exports.archiveCourse = (req, res) => {
-    const {courseId} = req.params
+module.exports.archiveCourse = (req,res) => {
+    const {courseId} = req.params;
     const updateField = {
-        isActive : false
+        isActive: false
     }
 
     return Course.findByIdAndUpdate(courseId, updateField).then(result => {
         if(result === null || result.length === 0){
             res.send({
                 code: "COURSE-NOT-FOUND",
-                message: "WALA PANG NAKALAGAY NA COURSE WITH THAT ID BHIE!"
+                message: "Cannot found course with the provided ID."
             })
         }else{
             res.send({
                 code: "COURSE-ARCHIVED-SUCCESSFULLY",
-                message: `Course ID: ${courseId.toUpperCase()} is now archived`,
+                message: "The couse is now in archives.",
                 result: result
             })
         }
     })
 }
 
-//Unarchive course
-module.exports.activateCourse = (req, res) => {
+// Unarchive course
+module.exports.activateCourse = (req,res) => {
     const {courseId} = req.params;
     const updateField = {
-        isActive : true
+        isActive: true
     }
 
     return Course.findByIdAndUpdate(courseId, updateField).then(result => {
         if(result === null || result.length === 0){
             res.send({
                 code: "COURSE-NOT-FOUND",
-                message: "WALA PANG NAKALAGAY NA COURSE WITH THAT ID BHIE!"
+                message: "Cannot found course with the provided ID."
             })
         }else{
             res.send({
                 code: "COURSE-ACTIVATED-SUCCESSFULLY",
-                message: `Course ID: ${courseId.toUpperCase()} is now available!`,
+                message: `${result.name} is now activated.`,
                 result: result
             })
         }
     })
 }
-
-//

@@ -1,8 +1,9 @@
-import { Container, Button } from "react-bootstrap"
+import { Container, Button, Nav } from "react-bootstrap"
 import { NavLink } from "react-router-dom"
 
 
-export default function ErrorPage() {
+
+export default function ErrorPage(){
     return(
         <Container fluid className="p-5 vh-100">
             <Container className="p-5 d-flex flex-column justify-content-center align-items-center vh-100">
@@ -12,4 +13,4 @@ export default function ErrorPage() {
             </Container>
         </Container>
     )
-};
+}
