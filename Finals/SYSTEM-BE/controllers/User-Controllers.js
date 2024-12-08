@@ -120,3 +120,45 @@ module.exports.enroll = (req, res) => {
         }
     })
 }
+
+module.exports.changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user.id; // Assuming the user's ID is set via authentication middleware
+
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).send({
+                code: "USER-NOT-FOUND",
+                message: "User not found."
+            });
+        }
+
+        // Verify the current password
+        const isPasswordCorrect = bcryptjs.compareSync(currentPassword, user.password);
+        if (!isPasswordCorrect) {
+            return res.status(400).send({
+                code: "PASSWORD-INCORRECT",
+                message: "Current password is incorrect."
+            });
+        }
+
+        // Hash the new password and update the user
+        const hashedNewPassword = bcryptjs.hashSync(newPassword, 10);
+        user.password = hashedNewPassword;
+
+        await user.save();
+
+        res.send({
+            code: "PASSWORD-CHANGE-SUCCESS",
+            message: "Password has been changed successfully."
+        });
+    } catch (error) {
+        res.status(500).send({
+            code: "PASSWORD-CHANGE-FAILED",
+            message: "An error occurred while changing the password.",
+            error: error.message
+        });
+    }
+};

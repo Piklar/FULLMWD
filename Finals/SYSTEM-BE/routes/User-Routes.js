@@ -19,6 +19,8 @@ router.post("/details", verify, userController.getProfile);
 // Get user details
 router.post("/enroll", verify, userController.enroll);
 
+// Change Password
+router.post("/changepassword", verify, userController.changePassword);
 
 
 

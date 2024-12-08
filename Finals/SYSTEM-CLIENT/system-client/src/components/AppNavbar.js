@@ -12,7 +12,7 @@ export default function AppNavbar(){
     return(
         <Navbar expand="lg" className="bg-body-tertiary sticky-top shadow">
         <Container>
-            <Navbar.Brand href="#home" className='fw-bold'>UA ENROLLMENT</Navbar.Brand>
+            <Navbar.Brand href="/" className='fw-bold'>UA ENROLLMENT</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
@@ -25,9 +25,13 @@ export default function AppNavbar(){
                         <>
                         <Nav.Link as={Link} to="/add-course">Add Course</Nav.Link>
                         <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
+                        <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
                         </>
                         :
+                        <>
                         <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
+                        <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
+                        </>
                     :
                     <>
                     <Nav.Link as={Link} to="/register">Register</Nav.Link>
